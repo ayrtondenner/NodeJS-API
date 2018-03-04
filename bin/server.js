@@ -1,4 +1,4 @@
-'use restrict'
+'use strict'
 
 const http = require('http');
 const debug = require('debug')('nodestr:server');
