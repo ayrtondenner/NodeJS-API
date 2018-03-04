@@ -9,6 +9,13 @@ const schema = new Schema({
         required: true,
         trim: true
     },
+    slug: {
+        type: String,
+        required: true,
+        trim: true,
+        index: true,
+        unique: true
+    },
     description: {
         type: String,
         required: true,
@@ -28,7 +35,7 @@ const schema = new Schema({
         type: Boolean,
         required: true,
         default: true
-    }    
+    }
 });
 
 module.exports = mongoose.model('Game', schema);
