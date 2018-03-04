@@ -1,12 +1,37 @@
-'use strict'
+'use strict';
+
+const mongoose = require('mongoose');
+const Game = mongoose.model('Game');
+
+exports.get = (req, res, next) => {
+    Game.find({
+        active: true
+    }, 'name description')
+    .then(x => {
+        res.status(200).send(x);
+    }).catch(e => {
+        res.status(400).send(e);
+    })    
+};
 
 exports.post = (req, res, next) => {
-    res.status(201).send({
-        id: Math.random(),
-        gameName: req.body.gameName,
-        stages: req.body.stages,
-        message: 'Jogo "' + req.body.gameName + '" criado com sucesso!'
-    })
+    var game = new Game(req.body);
+    game.save().then(x => {
+        res.status(201).send({
+            id: game.id,
+            name: game.name,
+            description: game.description,
+            stages: game.stages,
+            competences: game.competences,
+            active: game.active,
+            message: 'Jogo "' + game.name + '" criado com sucesso!'
+        })
+    }).catch(e => {
+        res.status(400).send({
+            data: e,
+            message: 'Erro ao salvar jogo!'
+        })
+    });
 };
 
 exports.put = (req, res, next) => {
