@@ -5,12 +5,12 @@ const controller = require('../controllers/game')
 const express = require('express');
 const router = express.Router();
 
-router.get('/', controller.get)
-      .get('/:slug', controller.getBySlug)
-      .get('/comp/:competences', controller.getByCompetences)
-      .get('/id/:id', controller.getById)
-      .post('/', controller.post)
-      .put('/', controller.put)
-      .delete('/', controller.delete)
+router.get('/', controller.getActiveGames)
+      .get('/:slug', controller.getGamesBySlug)
+      .get('/comp/:competences', controller.getGamesByCompetences)
+      .get('/id/:id', controller.getGamesById)
+      .post('/', controller.createGame)
+      .put('/', controller.updateGame)
+      .delete('/', controller.deleteGame)
 
 module.exports = router;
