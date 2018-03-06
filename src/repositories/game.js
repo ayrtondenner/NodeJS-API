@@ -3,39 +3,44 @@
 const mongoose = require('mongoose');
 const Game = mongoose.model('Game');
 
-exports.getActiveGames = () => {
-    return Game
-        .find({
-            active: true,
-        }, 'name description')
+exports.getActiveGames = async () => {
+    var games = await Game.find({
+        active: true,
+    }, 'name description')
+
+    return games;
 };
 
-exports.getGamesBySlug = (slug) => {
-    return Game
-        .findOne({
-            slug: slug
-        }, 'name description')
+exports.getGamesBySlug = async (slug) => {
+    var games = await Game.findOne({
+        slug: slug
+    }, 'name description');
+
+    return games;
 };
 
-exports.getGamesByCompetences = (competences) => {
-    return Game
-        .find({
-            competences: competences,
-            active: true
-        }, 'name description')
+exports.getGamesByCompetences = async (competences) => {
+    var games = await Game.find({
+        competences: competences,
+        active: true
+    }, 'name description')
+
+    return games;
 };
 
-exports.getGamesById = (id) => {
-    return Game.findById(id)
+exports.getGamesById = async (id) => {
+    var games = await Game.findById(id);
+
+    return games;
 };
 
-exports.createGame = (gameBody) => {
-    var game = new Game(gameBody);
-    return game.save();
+exports.createGame = async (gameBody) => {
+    var savedGame = await new Game(gameBody).save();
+    return savedGame;
 };
 
-exports.updateGame = (gameBody) => {
-    return Game.findByIdAndUpdate(gameBody.id, {
+exports.updateGame = async (gameBody) => {
+    var updatedGame = await Game.findByIdAndUpdate(gameBody.id, {
         $set: {
             name: gameBody.name,
             slug: gameBody.slug,
@@ -45,8 +50,11 @@ exports.updateGame = (gameBody) => {
             active: gameBody.active
         }
     }, { new: true }) // Para retornar o novo objeto atualizado
+
+    return updatedGame;
 };
 
-exports.deleteGame = (id) => {
-    return Game.findByIdAndRemove(id);
+exports.deleteGame = async (id) => {
+    var deletedGame = await Game.findByIdAndRemove(id);
+    return deletedGame;
 };

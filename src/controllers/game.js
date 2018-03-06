@@ -1,92 +1,99 @@
 'use strict';
 
-var HttpStatusCode = require('http-status-codes');
+const HttpStatusCode = require('http-status-codes');
 const mongoose = require('mongoose');
 const Game = mongoose.model('Game');
 const repository = require('../repositories/game')
 
 
-exports.getActiveGames = (req, res, next) => {
-    repository
-        .getActiveGames()
-        .then(x => {
-            res.status(HttpStatusCode.OK).send(x);
-        }).catch(e => {
-            res.status(HttpStatusCode.BAD_REQUEST).send(e);
-        })
-};
-
-exports.getGamesBySlug = (req, res, next) => {
-    repository
-        .getGamesBySlug(req.params.slug)
-        .then(x => {
-            res.status(HttpStatusCode.OK).send(x);
-        }).catch(e => {
-            res.status(HttpStatusCode.BAD_REQUEST).send(e);
-        })
-};
-
-exports.getGamesByCompetences = (req, res, next) => {
-    repository
-        .getGamesByCompetences(req.params.competences)
-        .then(x => {
-            res.status(HttpStatusCode.OK).send(x)
-        }).catch(e => {
-            res.status(HttpStatusCode.BAD_REQUEST).send(e)
+exports.getActiveGames = async (req, res, next) => {
+    try {
+        var activeGames = await repository.getActiveGames();
+        res.status(HttpStatusCode.OK).send(activeGames);
+    } catch (error) {
+        res.status(HttpStatusCode.BAD_REQUEST).send({
+            error: error,
+            message: 'Erro ao procurar jogos!'
         });
+    }
 };
 
-exports.getGamesById = (req, res, next) => {
-    repository.getGamesById(req.params.id)
-        .then(x => {
-            res.status(HttpStatusCode.OK).send(x);
-        }).catch(e => {
-            res.status(HttpStatusCode.BAD_REQUEST).send(e);
-        })
-};
-
-exports.createGame = (req, res, next) => {
-    repository
-        .createGame(req.body)
-        .then(x => {
-            res.status(HttpStatusCode.CREATED).send({
-                game: x,
-                message: 'Jogo "' + x.name + '" criado com sucesso!'
-            })
-        }).catch(e => {
-            res.status(HttpStatusCode.BAD_REQUEST).send({
-                data: e,
-                message: 'Erro ao salvar jogo!'
-            })
+exports.getGamesBySlug = async (req, res, next) => {
+    try {
+        var games = await repository.getGamesBySlug(req.params.slug);
+        res.status(HttpStatusCode.OK).send(games);
+    } catch (error) {
+        res.status(HttpStatusCode.BAD_REQUEST).send({
+            error: error,
+            message: 'Erro ao procurar jogos!'
         });
+    }
 };
 
-exports.updateGame = (req, res, next) => {
-    repository
-        .updateGame(req.body).then(x => {
-            res.status(HttpStatusCode.OK).send({
-                game: x,
-                message: 'Jogo "' + x.name + '" atualizado com sucesso!'
-            })
-        }).catch(e => {
-            res.status(HttpStatusCode.BAD_REQUEST).send({
-                data: e,
-                message: "Erro ao atualizar o jogo!"
-            })
+exports.getGamesByCompetences = async (req, res, next) => {
+    try {
+        var games = await repository.getGamesByCompetences(req.params.competences);
+        res.status(HttpStatusCode.OK).send(games);
+    } catch (error) {
+        res.status(HttpStatusCode.BAD_REQUEST).send({
+            error: error,
+            message: 'Erro ao procurar jogos!'
         });
+    }
 };
 
-exports.deleteGame = (req, res, next) => {
-    repository
-        .deleteGame(req.body.id)
-        .then(x =>
-            res.status(HttpStatusCode.OK).send({
-                message: 'Jogo excluído com sucesso!'
-            })
-        )
-        .catch(e => {
-            res.status(HttpStatusCode.BAD_REQUEST).send({
-                message: 'Jogo não foi excluído!'
-            })
-        })
+exports.getGamesById = async (req, res, next) => {
+    try {
+        var games = await repository.getGamesById(req.params.id);
+        res.status(HttpStatusCode.OK).send(games);
+    } catch (error) {
+        res.status(HttpStatusCode.BAD_REQUEST).send({
+            error: error,
+            message: 'Erro ao procurar jogos!'
+        });
+    }
+};
+
+exports.createGame = async (req, res, next) => {
+    try {
+        var gameCreated = await repository.createGame(req.body);
+        res.status(HttpStatusCode.CREATED).send({
+            game: gameCreated,
+            message: 'Jogo "' + gameCreated.name + '" criado com sucesso!'
+        });
+    } catch (error) {
+        res.status(HttpStatusCode.BAD_REQUEST).send({
+            error: error,
+            message: 'Erro ao salvar jogo!'
+        });
+    }
+};
+
+exports.updateGame = async (req, res, next) => {
+    try {
+        var updatedGame = await repository.updateGame(req.body);
+        res.status(HttpStatusCode.OK).send({
+            game: updatedGame,
+            message: 'Jogo "' + updatedGame.name + '" atualizado com sucesso!'
+        });
+    } catch (error) {
+        res.status(HttpStatusCode.BAD_REQUEST).send({
+            error: error,
+            message: "Erro ao atualizar o jogo!"
+        });
+    }
+};
+
+exports.deleteGame = async (req, res, next) => {
+    try {
+        await repository.deleteGame(req.body.id);
+        res.status(HttpStatusCode.OK).send({
+            message: 'Jogo excluído com sucesso!'
+        });
+    } catch (error) {
+        res.status(HttpStatusCode.BAD_REQUEST).send({
+            error: error,
+            message: 'Jogo não foi excluído!'
+        });
+    }
 };
